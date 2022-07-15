@@ -1,3 +1,5 @@
 /venv
 /.idea
 naive_bayes.pickle
+negative.txt
+positive.txt
