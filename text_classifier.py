@@ -35,22 +35,28 @@ short_pos = open("positive.txt", "r").read()
 short_neg = open("negative.txt", "r").read()
 
 documents = []
+all_words = []
+allowed_word_types = ["J"]
 
 for r in short_pos.split("\n"):
     documents.append((r, "pos"))
+    words = word_tokenize(r)
+    pos = nltk.pos_tag(words)
+    for w in pos:
+        if w[1][0] in allowed_word_types:
+            all_words.append(w[0].lower())
 
 for r in short_neg.split("\n"):
     documents.append((r, "neg"))
+    words = word_tokenize(r)
+    pos = nltk.pos_tag(words)
+    for w in pos:
+        if w[1][0] in allowed_word_types:
+            all_words.append(w[0].lower())
 
-all_words = []
-short_pos_words = word_tokenize(short_pos)
-short_neg_words = word_tokenize(short_neg)
 
-for w in short_pos_words:
-    all_words.append(w.lower())
 
-for w in short_neg_words:
-    all_words.append(w.lower())
+
 
 all_words = nltk.FreqDist(all_words)
 
@@ -134,4 +140,6 @@ voted_classifier = VoteClassifier(classifier,
 
 print("Voted Algo accuracy:", (nltk.classify.accuracy(voted_classifier, testing_set))*100)
 
-print("Classification: ", voted_classifier.classify(testing_set[0][0]), "Confidence:", voted_classifier.confidence(testing_set[0][0]))
+def sentiment(text):
+    feats = find_features(text)
+    return voted_classifier.classify(feats), voted_classifier.confidence(feats)
