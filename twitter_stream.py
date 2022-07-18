@@ -3,6 +3,7 @@ from tweepy import OAuthHandler
 from tweepy.streaming import StreamListener
 import time
 import json
+import text_classifier as tc
 
 #consumer key, consumer secret, access token, access secret.
 ckey=""
@@ -16,6 +17,14 @@ class listener(StreamListener):
         all_data = json.loads(data)
 
         tweet = all_data["text"]
+        sentiment_value, confidence = tc.sentiment(tweet)
+        print(tweet, sentiment_value, confidence)
+
+        if confidence*100 >= 80:
+            output = open('twitter-out.txt', 'a')
+            output.write(sentiment_value)
+            output.write('\n')
+            output.close()
 
         username = all_data["user"]["screen_name"]
 
